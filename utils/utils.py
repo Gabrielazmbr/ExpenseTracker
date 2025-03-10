@@ -5,7 +5,7 @@ import pandas as pd
 
 def read_data():
     files = f'{INPUT_DATA}/{EXPENSES_HIST}'
-    df = pd.read_csv(files, index_col=0)
+    df = pd.read_csv(files)
     for col in df.columns:
         if 'date' in col.lower():
             df[col] = pd.to_datetime(df[col])

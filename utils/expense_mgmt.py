@@ -35,10 +35,13 @@ def save_categories(new_cat):
     cats_ex = read_categories_file()
     mode ='a' if exists else 'w'
     if cats_ex is None or new_cat not in cats_ex or not exists:
-        cats = [new_cat]
-    with open(file, mode) as f:
-        f.writelines([cat+'\n' for cat in cats])
-        print('Categories updated successfully!')
+        with open(file, mode) as f:
+            if not exists:
+                f.writelines('\n')
+            f.writelines(new_cat)
+            print('Categories updated successfully!')
+    else:
+        print(f'A category already exists with that name. The category {new_cat} is going to be used.')
 
 def input_date_manually():
     correct = False
@@ -58,11 +61,9 @@ def input_date_manually():
             correct = False
 
 def expense_category():
+    print('What is the expense category?')
     categories = read_categories_file()
-    if categories is None:
-        category, categories = add_category()
-    else:
-        category, categories = select_or_add_cat(categories)
+    category, categories = select_or_add_cat(categories)
     save_categories(category)
     return category
 
@@ -96,7 +97,7 @@ def expense_amount():
     modify = True
     while incorrect or modify:
         try:
-            amount = int(input('Input the expense amount: '))
+            amount = int(input('Input the expense amount (enter the number with no dots or commas): '))
             print(f'The input expense was: ${amount:,.2f}')
             modify = confirm()
             incorrect = False
@@ -145,25 +146,12 @@ def add_category(categories=None):
 
 
 def select_or_add_cat(categories):
-    cat_menu = {1:'Add a new category', 2: 'Select a category'}
-    cat_menu_txt = ''.join([f'{i[0]}. {i[1]}\n' for i in cat_menu.items()]) 
-    sel = 0 
     goback = True
-    while sel not in range(1,len(cat_menu)+1) or goback:
-        print('\nExistent categories:\n'+cat_menu_txt)
-        try:
-            sel = int(input('Please select an option\n'))
-        except ValueError:
-            sel=0
-            print('Please select a valid option.')
-            continue
-        if sel not in range(1,len(cat_menu)+1):
-            sel = 0
-            continue
-        if sel ==1:
+    while categories is None or goback:
+        if categories is None:
             category, categories = add_category(categories)
             return category, categories
-        elif sel==2:
+        else:
             category = select_category(categories)
             if category is None:
                 goback = True
@@ -184,6 +172,10 @@ def select_category(categories):
             continue
         if cat_num==0:
             return
+        elif cat_num not in range(len(cats_sels.items())):
+            print('Please select a valid option!')
+            modify = True
+            continue
         print(f'The selected category is: {cats_sels[cat_num]}')
         modify = confirm()
         if not modify:

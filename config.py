@@ -2,7 +2,7 @@ INPUT_DATA = 'history_data'
 EXPENSES_HIST = 'expenses_history.csv'
 ANALISYS_PATH = 'analysis_plots'
 
-DEBUG = True
+DEBUG = False
 if DEBUG:
     INPUT_DATA = 'test'
     EXPENSES_HIST = 'dummy_data.csv'

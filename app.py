@@ -6,7 +6,6 @@ import glob
 import os
 import csv
 from config import INPUT_DATA, EXPENSES_HIST, FAREWELLS, MENU, ANALISYS_PATH
-import matplotlib.pyplot as plt
 from utils import expense_mgmt as exp 
 from utils.utils import confirm
 from utils.expense_mgmt import new_expense
@@ -23,6 +22,10 @@ def expense_desc():
     return desc
 
 def add_expense():
+    goback = bsc.show_selection_bckmenu(1)
+    if goback:
+        return
+    print('Welcome to add expense. To add a new expense input the data required.')
     date_exp = exp.expense_date()
     amount = exp.expense_amount()    
     source = exp.expense_paymethod()
@@ -56,27 +59,25 @@ def read_history():
 
 
 if __name__ =="__main__":
-    goback, repeat = True, True
-    while goback or repeat:
+    goback = True
+    while goback:
         bsc.welcome()
         selection = bsc.get_selection()
-        goback = bsc.show_selection_bckmenu(selection)
-        if goback:
-            continue
         if 'exit' in MENU[selection].lower():
             # select an farewell sentence randomly
-            print(FAREWELLS[random.randint(0, len(FAREWELLS))])
+            print(FAREWELLS[random.randint(0, len(FAREWELLS)-1)])
             # exit
             sys.exit()
         elif selection==1:
             add_expense()
-            repeat = confirm('Do you wish to perform another operation? (yes/no)')
         elif selection==2:
             analysis.show_history()
-            repeat = confirm('Do you wish to perform another operation? (yes/no)')
         elif selection==3:
             analysis.expenses_analysis()
         
+        if goback:
+            continue
+    print(FAREWELLS[random.randint(0, len(FAREWELLS)-1)])
             
 
 

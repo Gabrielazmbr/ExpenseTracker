@@ -3,22 +3,32 @@ import matplotlib.pyplot as plt
 from utils.utils import read_data, confirm
 from config import ANALISYS_PATH
 import os
+from utils import basic as bsc
 
 
 def show_history():
+    goback = bsc.show_selection_bckmenu(2)
+    if goback:
+        return
+    print('Welcome to Show History. Here you can see the expenses submitted.')
     df = read_data()
     see = True
     i = 0
     while see:
         dfi = df.iloc[i:i+10, :]
         if dfi.empty:
+            print('There is no more data to show.')
             return
         print(dfi)
-        more = confirm('See more data (yes/no): ')
-        if more:
-            i+=10
+        if not df.iloc[i+10:i+20, :].empty:
+            more = confirm('See more data (yes/no): ')
+            if more:
+                i+=10
+            else:
+                see = False
         else:
-            see = False
+            print('There is no more data to show.')
+            return
 
 def show_barplots(df:pd.DataFrame, datetime_columns:list):
     cols = [col for col in df.select_dtypes(include=['object', 'category']) if col not in datetime_columns]
@@ -55,11 +65,26 @@ def show_pie_plot(df, cat_col):
     os.system(f'start {ANALISYS_PATH}/categories_pieplot.png')
 
 def expenses_analysis():
+    goback = bsc.show_selection_bckmenu(3)
+    if goback:
+        return
+    print('Welcome to Expenses Analysis. the following table shows dispersion measures of quantitative columns.')
     if not os.path.exists(f'{ANALISYS_PATH}'):
         os.mkdir(f'{ANALISYS_PATH}')
     df = read_data()
     print('--------------------Quantitative values stats---------------')
     print(df.describe())
+    print('')
+    print('--------------------Expended total---------------')
+    print('')
+    total = df['amount'].sum()
+    print(f'$ {total:,.2f}')
+    print('')
+    print('--------------------Expendables by category---------------')
+    print('')
+    df_by_cat = df.groupby(['category'])['amount'].sum()
+    print(df_by_cat)
+    print('')
     datetime_columns = df.select_dtypes(include=['datetime64[ns]']).columns
     input('Plots are going to be opened as soon as you hit enter.')
     show_barplots(df, datetime_columns)
