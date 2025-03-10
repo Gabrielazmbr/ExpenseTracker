@@ -90,6 +90,44 @@ def expenses_analysis():
     inp = input('Plots are going to be opened as soon as you hit enter. Press 0 to abort.')
     if inp==0:
         return
-    show_barplots(df, datetime_columns)
-    show_date_line(df, datetime_columns)
-    show_pie_plot(df, 'category')
+
+    show_combined_plot(df, datetime_columns)
+
+def show_combined_plot(df, datetime_columns):
+    cols = [col for col in df.select_dtypes(include=['object', 'category']) if col not in datetime_columns]
+
+    nrows = len(cols) + 2  # Add 2 more for the line plot and pie chart
+    fig, axs = plt.subplots(nrows=nrows, figsize=(10, nrows * 4))  # Adjust figsize as needed
+    fig.tight_layout(pad=5.0)  # Add padding between subplots
+
+    # Plot barplots for categorical columns
+    for i, col in enumerate(cols):
+        vals = df[col].value_counts()
+        cats = vals.index
+        values = vals.values
+        ax = axs[i]  # Select the subplot (axis) for this column
+        ax.bar(cats, values)
+        ax.set_xlabel('Categories')
+        ax.set_ylabel('Count')
+        ax.set_title(f'{col}')
+        ax.tick_params(axis='x', rotation=90)
+
+    # Plot the line plot for datetime columns
+    df_ts = df.groupby(list(datetime_columns))['amount'].mean()
+    indx = df_ts.index
+    vals = df_ts.values
+    ax = axs[len(cols)]  # Next subplot for the line plot
+    ax.plot(indx, vals)
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Mean amount expense')
+    ax.set_title('Expenses during time')
+
+    # Plot the pie chart for 'category'
+    cat_cals = df['category'].value_counts()
+    ax = axs[len(cols) + 1]  # Next subplot for the pie chart
+    ax.pie(cat_cals.values, labels=cat_cals.index, autopct='%1.1f%%')
+    ax.set_title('Categories Pie Chart')
+
+    # Save the entire figure with all subplots
+    plt.savefig(f'{ANALISYS_PATH}/expense_plots_combined.png')
+    os.system(f'start {ANALISYS_PATH}/expense_plots_combined.png')
