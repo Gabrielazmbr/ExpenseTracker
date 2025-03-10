@@ -36,7 +36,7 @@ def show_barplots(df:pd.DataFrame, datetime_columns:list):
         vals = df[col].value_counts()
         cats = vals.index
         values = vals.values
-        plt.figure(figsize=(12, 15))
+        plt.figure(figsize=(8, 12))
         plt.bar(cats, values)
         plt.xlabel('Categories')
         plt.ylabel('Count')
@@ -83,10 +83,13 @@ def expenses_analysis():
     print('--------------------Expendables by category---------------')
     print('')
     df_by_cat = df.groupby(['category'])['amount'].sum()
+    df_by_cat = df_by_cat.apply(lambda x: f'$ {x:,.2f}')
     print(df_by_cat)
     print('')
     datetime_columns = df.select_dtypes(include=['datetime64[ns]']).columns
-    input('Plots are going to be opened as soon as you hit enter.')
+    inp = input('Plots are going to be opened as soon as you hit enter. Press 0 to abort.')
+    if inp==0:
+        return
     show_barplots(df, datetime_columns)
     show_date_line(df, datetime_columns)
     show_pie_plot(df, 'category')

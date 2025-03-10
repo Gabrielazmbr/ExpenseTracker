@@ -64,7 +64,7 @@ def expense_category():
     print('What is the expense category?')
     categories = read_categories_file()
     category, categories = select_or_add_cat(categories)
-    save_categories(category)
+    
     return category
 
 def expense_date():
@@ -150,6 +150,7 @@ def select_or_add_cat(categories):
     while categories is None or goback:
         if categories is None:
             category, categories = add_category(categories)
+            save_categories(category)
             return category, categories
         else:
             category = select_category(categories)

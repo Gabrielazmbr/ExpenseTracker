@@ -32,7 +32,7 @@ def add_expense():
     category = exp.expense_category()
     desc = expense_desc()
     data = {'date_exp':date_exp.strftime('%m/%d/%Y'),
-             'amount':f'{amount:,.2f}',
+             'amount':amount,
              'source':source,
              'category':category,
              'desc':desc}
