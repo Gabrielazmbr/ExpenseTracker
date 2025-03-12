@@ -166,18 +166,22 @@ def select_category(categories):
     while modify:
         cats_sels = {n+1:i for n,i in enumerate(categories)}
         cats_sels_txt = ''.join([f'{i[0]}. {i[1]}\n' for i in cats_sels.items()])
+        cat_input = input(cats_sels_txt+'\nInput a new category, or press 0 to go back to the previous menu: ')
         try:
-            cat_num = int(input(cats_sels_txt+'\nOr press 0 to go back to the previous menu'))
+            cat_num = int(cat_input)
         except ValueError:
-            modify = True
-            continue
-        if cat_num==0:
-            return
-        elif cat_num not in range(len(cats_sels.items())):
-            print('Please select a valid option!')
-            modify = True
-            continue
-        print(f'The selected category is: {cats_sels[cat_num]}')
-        modify = confirm()
-        if not modify:
-            return cats_sels[cat_num]
+            category = cat_input
+            if 'cat_num' in locals():
+                del cat_num
+        if 'cat_num' in locals():
+            if cat_num==0:
+                return
+            print(f'The selected category is: {cats_sels[cat_num]}')
+            modify = confirm()
+            if not modify:
+                return cats_sels[cat_num]
+        else:
+            print(f'The selected category is: {category}')
+            modify = confirm()
+            if not modify:
+                return category
