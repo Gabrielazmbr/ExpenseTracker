@@ -36,9 +36,7 @@ def save_categories(new_cat):
     mode ='a' if exists else 'w'
     if cats_ex is None or new_cat not in cats_ex or not exists:
         with open(file, mode) as f:
-            if not exists:
-                f.writelines('\n')
-            f.writelines(new_cat)
+            f.writelines(f'{new_cat} \n')
             print('Categories updated successfully!')
     else:
         print(f'A category already exists with that name. The category {new_cat} is going to be used.')
@@ -184,4 +182,5 @@ def select_category(categories):
             print(f'The selected category is: {category}')
             modify = confirm()
             if not modify:
+                save_categories(category)
                 return category
